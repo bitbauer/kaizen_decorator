@@ -1,53 +1,57 @@
-from abc import ABCMeta
+from abc import ABCMeta, abstractmethod
 
-@six.add_metaclass(ABCMeta)
-class Abstract_Gericht(object):
-   def getPreis(self):
-      pass
-   def druckeBeschreibung(self):
-      pass
+class Abstract_Gericht_Component(ABCMeta):
+    """
+    Define the interface for objects that can have responsibilities
+    added to them dynamically.
+    """
+    @abstractmethod
+    def getPreis(self):
+        pass
+    @abstractmethod
+    def druckeBeschreibung(self):
+        pass
 
-class Hueftsteak(Abstract_Gericht):
-   def getPreis(self):
-      return 12.50
-   def druckeBeschreibung(self):
-      return 'Hueftsteak'
+class Hueftsteak(Abstract_Gericht_Component):
+    def getPreis(self):
+        return 12.50
+    def druckeBeschreibung(self):
+        return 'Hueftsteak'
 
-class WienerSchnitzel(Abstract_Gericht):
-   def getPreis(self):
-      return 7.50
-   def druckeBeschreibung(self):
-      return 'Wiener Schnitzel'
+class WienerSchnitzel(Abstract_Gericht_Component):
+    def getPreis(self):
+        return 7.50
+    def druckeBeschreibung(self):
+        return 'Wiener Schnitzel'
 
-@six.add_metaclass(ABCMeta)
-class Abstract_Gericht_Decorator(Abstract_Gericht):
-   def __init__(self,decorated_Gericht):
-      self.decorated_gericht = decorated_gericht
-   def getPreis(self):
-      return self.decorated_gericht.getPreis()
-   def druckeBeschreibung(self):
-      return self.decorated_gericht.druckeBeschreibung()
+class Abstract_Gericht_Decorator(Abstract_Gericht_Component, ABCMeta):
+    """
+    Maintain a reference to a Component object and define an interface
+    that conforms to Component's interface.
+    """
+    def __init__(self,component):
+        self._component = component
+    @abstractmethod
+    def getPreis(self):
+        pass
+    @abstractmethod
+    def druckeBeschreibung(self):
+        pass
 
 class Bratkartoffeln(Abstract_Gericht_Decorator):
-   def __init__(self,decorated_gericht):
-      Abstract_Gericht_Decorator.__init__(self,decorated_gericht)
-   def getPreis(self):
-      return self.decorated_gericht.getPreis() + 3.50
-   def druckeBeschreibung(self):
-	   return self.decorated_gericht.druckeBeschreibung() + ', Bratkartoffeln'
+    def getPreis(self):
+        return self._component.getPreis() + 3.50
+    def druckeBeschreibung(self):
+        return self._component.druckeBeschreibung() + ', Bratkartoffeln'
 
 class Salat(Abstract_Gericht_Decorator):
-   def __init__(self,decorated_gericht):
-      Abstract_Gericht_Decorator.__init__(self,decorated_gericht)
-   def getPreis(self):
-      return self.decorated_gericht.getPreis() + 2.50
-   def druckeBeschreibung(self):
-      return self.decorated_gericht.druckeBeschreibung() + ', Salat'
+    def getPreis(self):
+        return self._component.getPreis() + 2.50
+    def druckeBeschreibung(self):
+        return self._component.druckeBeschreibung() + ', Salat'
 
 class Suppe(Abstract_Gericht_Decorator):
-   def __init__(self,decorated_gericht):
-      Abstract_Gericht_Decorator.__init__(self,decorated_gericht)
-   def getPreis(self):
-      return self.decorated_gericht.getPreis() + 3.00
-   def druckeBeschreibung(self):
-      return self.decorated_gericht.druckeBeschreibung() + ', Suppe'
+    def getPreis(self):
+        return self._component.getPreis() + 3.00
+    def druckeBeschreibung(self):
+        return self._component.druckeBeschreibung() + ', Suppe'
